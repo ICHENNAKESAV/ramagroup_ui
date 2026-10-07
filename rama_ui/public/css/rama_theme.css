@@ -1107,6 +1107,14 @@ body.sidebar-closed .page-container {
 }
 .list-row-container .list-row-head .text-muted,
 .list-row-container .list-row-head span,
-.list-row-container .list-row-head .list-subject {
+.list-row-container .list-row-head .list-subject,
+.list-row-container .list-row-head .list-count,
+.list-row-container .list-row-head .level-right,
+.list-row-container .list-row-head .level-right span {
     color: #ffffff !important;
+}
+.list-row-container .list-row-head svg.icon,
+.list-row-container .list-row-head svg.icon use {
+    stroke: #ffffff !important;
+    fill: #ffffff !important;
 }
