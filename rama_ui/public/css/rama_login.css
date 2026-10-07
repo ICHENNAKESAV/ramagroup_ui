@@ -1,0 +1,177 @@
+/* =====================================================================
+   RAMA UI - PREMIUM LOGIN PAGE (2-COLUMN SPLIT SCREEN)
+   ===================================================================== */
+
+body[data-route="login"] {
+    background: #ffffff !important;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling on desktop */
+}
+
+/* 
+ * 1. The Left Column (Branding/Hero Area)
+ * We inject this purely via CSS pseudo-element so we don't have to touch Frappe's core HTML.
+ */
+body[data-route="login"]::before {
+    content: "Welcome to Rama Group";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50vw;
+    height: 100vh;
+    z-index: 10;
+    
+    /* Premium Gradient matching the Rama UI theme */
+    background: linear-gradient(135deg, #00094b 0%, #001272 50%, #00aaf8 100%);
+    
+    /* Beautiful subtle pattern / overlay */
+    background-image: radial-gradient(circle at 20% 150%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                      radial-gradient(circle at 80% -50%, rgba(0, 170, 248, 0.4) 0%, transparent 50%),
+                      linear-gradient(135deg, #00094b 0%, #001272 50%, #00aaf8 100%);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+}
+
+/* 
+ * 2. The Right Column (The Form Area)
+ * We shift the main Frappe container to the right side of the screen.
+ */
+body[data-route="login"] main,
+body[data-route="login"] .container {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 50vw !important;
+    width: 50vw !important;
+    max-width: 50vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 20;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: #f8faff;
+}
+
+body[data-route="login"] .page-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 
+ * 3. Form Styling (Card, Inputs, Buttons)
+ */
+body[data-route="login"] .page-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 170, 248, 0.1) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 20px 40px rgba(0, 9, 75, 0.08), 0 1px 3px rgba(0,0,0,0.02) !important;
+    padding: 40px !important;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+body[data-route="login"] .page-card:hover {
+    box-shadow: 0 25px 50px rgba(0, 9, 75, 0.12), 0 2px 6px rgba(0,0,0,0.03) !important;
+    transform: translateY(-2px);
+}
+
+/* Form Inputs */
+body[data-route="login"] .form-control {
+    background: #f4f7fb !important;
+    border: 1px solid transparent !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-shadow: none !important;
+}
+
+body[data-route="login"] .form-control:focus {
+    background: #ffffff !important;
+    border-color: #00aaf8 !important;
+    box-shadow: 0 0 0 4px rgba(0, 170, 248, 0.1) !important;
+}
+
+/* Button Styling */
+body[data-route="login"] .btn-primary,
+body[data-route="login"] .btn-login {
+    background: linear-gradient(135deg, #00094b 0%, #001272 100%) !important;
+    border: none !important;
+    color: white !important;
+    border-radius: 10px !important;
+    padding: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 9, 75, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-route="login"] .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 9, 75, 0.3) !important;
+    background: linear-gradient(135deg, #001272 0%, #00094b 100%) !important;
+}
+
+/* Typography Overrides */
+body[data-route="login"] .page-card-head h4 {
+    font-weight: 700;
+    color: #00094b;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+body[data-route="login"] .page-card-subtitle {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Hide the native Navbar/Footer on login page just in case */
+body[data-route="login"] header,
+body[data-route="login"] footer {
+    display: none !important;
+}
+
+/* =====================================================================
+   RESPONSIVE (MOBILE) - Stack back to 1 column
+   ===================================================================== */
+@media (max-width: 900px) {
+    body[data-route="login"] {
+        overflow-y: auto;
+    }
+    
+    /* Hide the pseudo-element branding on mobile */
+    body[data-route="login"]::before {
+        display: none !important;
+    }
+    
+    /* Reset the right column to take full width */
+    body[data-route="login"] main,
+    body[data-route="login"] .container {
+        position: relative !important;
+        left: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        min-height: 100vh;
+        height: auto !important;
+        padding: 20px !important;
+    }
+    
+    body[data-route="login"] .page-card {
+        margin: 20px auto;
+    }
+}

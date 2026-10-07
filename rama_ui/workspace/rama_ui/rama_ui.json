@@ -1,0 +1,19 @@
+{
+ "category": "Modules",
+ "content": "[{\"type\": \"header\", \"data\": {\"text\": \"Rama UI Dashboard\"}}, {\"type\": \"paragraph\", \"data\": {\"text\": \"Welcome to Rama Group UI Custom Workspace.\"}}]",
+ "creation": "2026-10-05 16:24:00.000000",
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "icon": "fa-solid fa-layer-group",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Rama UI",
+ "modified": "2026-10-05 16:24:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rama UI",
+ "name": "Rama UI",
+ "owner": "Administrator",
+ "public": 1,
+ "sequence_id": 1.0,
+ "title": "Rama UI"
+}

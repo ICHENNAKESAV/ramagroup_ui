@@ -1,0 +1,541 @@
+/* =====================================================================
+   RAMA UI - Custom Color Theme (#00094b Main, #00aaf8 Accent, #630900 Highlight)
+   ===================================================================== */
+
+:root {
+	--rama-main-blue: #00094b;
+	--rama-cyan-accent: #00aaf8;
+	--rama-burgundy-accent: #630900;
+	
+	--rama-topbar-height: 68px;
+	--rama-topbar-bg: #00094b;
+	--rama-topbar-border: rgba(0, 170, 248, 0.3);
+	--rama-topbar-text: #ffffff;
+	--rama-sidebar-width: 250px;
+}
+
+[data-theme="dark"] {
+	--rama-topbar-bg: #00094b;
+	--rama-topbar-border: rgba(0, 170, 248, 0.4);
+	--rama-topbar-text: #ffffff;
+}
+
+/* ---------------------------------------------------------------------
+   Top Navbar Styles
+   --------------------------------------------------------------------- */
+.rama-top-navbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: var(--rama-topbar-height);
+	background-color: var(--rama-topbar-bg);
+	border-bottom: 1px solid var(--rama-topbar-border);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 20px;
+	z-index: 1030;
+	box-shadow: 0 2px 8px rgba(0, 9, 75, 0.4);
+}
+
+.rama-top-brand {
+	display: flex;
+	align-items: center;
+	height: 100%;
+	cursor: pointer;
+	margin-right: 20px;
+}
+
+.rama-logo-img {
+	height: 48px !important;
+	max-height: 52px !important;
+	width: auto !important;
+	object-fit: contain !important;
+	display: block !important;
+}
+
+.rama-top-search-area {
+	display: none;
+}
+
+.rama-top-right-area {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-left: auto;
+}
+
+/* ---------------------------------------------------------------------
+   Top Navbar Buttons & Proxy Components
+   --------------------------------------------------------------------- */
+.rama-proxy-btn {
+	background: rgba(255, 255, 255, 0.08) !important;
+	border: 1px solid rgba(0, 170, 248, 0.35) !important;
+	border-radius: 8px !important;
+	padding: 6px 14px !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	gap: 8px !important;
+	cursor: pointer !important;
+	color: #ffffff !important;
+	font-size: 0.875rem !important;
+	height: 40px !important;
+	transition: all 0.2s ease !important;
+}
+
+.rama-proxy-btn:hover {
+	background: rgba(0, 170, 248, 0.25) !important;
+	border-color: #00aaf8 !important;
+	color: #ffffff !important;
+	box-shadow: 0 0 10px rgba(0, 170, 248, 0.4) !important;
+}
+
+.rama-search-proxy {
+	width: 240px !important;
+	justify-content: flex-start !important;
+}
+
+.rama-search-proxy span {
+	flex: 1;
+	text-align: left;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.rama-top-icon {
+	width: 18px !important;
+	height: 18px !important;
+	stroke: #00aaf8 !important;
+	flex-shrink: 0 !important;
+}
+
+.rama-proxy-btn:hover .rama-top-icon {
+	stroke: #ffffff !important;
+}
+
+.rama-avatar-placeholder {
+	width: 28px;
+	height: 28px;
+	background-color: #630900;
+	color: #ffffff;
+	border: 1px solid #00aaf8;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 12px;
+}
+
+/* ---------------------------------------------------------------------
+   Notification Dropdown (#00094b + #00aaf8 + #630900)
+   --------------------------------------------------------------------- */
+.rama-notif-wrapper {
+	position: relative;
+	display: inline-block;
+}
+
+.rama-notif-proxy {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	position: relative !important;
+	visibility: visible !important;
+	opacity: 1 !important;
+}
+
+.rama-notif-proxy.hidden {
+	display: inline-flex !important;
+}
+
+.sidebar-notification-count {
+	position: absolute;
+	top: -4px;
+	right: -4px;
+	background-color: #630900 !important;
+	color: #ffffff !important;
+	font-size: 10px;
+	font-weight: 700;
+	padding: 2px 6px;
+	border-radius: 10px;
+	border: 1px solid #00aaf8;
+}
+
+.rama-notif-wrapper .dropdown-notifications {
+	position: absolute !important;
+	top: calc(100% + 10px) !important;
+	right: 0 !important;
+	width: 380px !important;
+	max-width: 90vw !important;
+	max-height: 520px !important;
+	background: #ffffff !important;
+	border: 2px solid #00aaf8 !important;
+	border-radius: 10px !important;
+	box-shadow: 0 12px 30px rgba(0, 9, 75, 0.3) !important;
+	z-index: 1055 !important;
+	overflow: hidden !important;
+	display: block !important;
+}
+
+.rama-notif-wrapper .dropdown-notifications.hidden {
+	display: none !important;
+}
+
+.rama-notif-wrapper .notification-list-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	border-bottom: 2px solid #00aaf8;
+	background: #00094b !important;
+	color: #ffffff !important;
+}
+
+.rama-notif-wrapper .notification-list-header .notifications-category {
+	color: rgba(255, 255, 255, 0.75);
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.rama-notif-wrapper .notification-list-header .notifications-category.active {
+	color: #00aaf8 !important;
+	border-bottom: 2px solid #00aaf8;
+}
+
+[data-theme="dark"] .rama-notif-wrapper .dropdown-notifications {
+	background: #0a1128 !important;
+	border-color: #00aaf8 !important;
+}
+
+/* ---------------------------------------------------------------------
+   User Dropdown Menu
+   --------------------------------------------------------------------- */
+.rama-user-dropdown-wrapper {
+	position: relative;
+}
+
+.rama-user-dropdown-menu {
+	display: none;
+	position: absolute;
+	top: 100%;
+	right: 0;
+	margin-top: 10px;
+	background: #ffffff;
+	border-radius: 10px;
+	box-shadow: 0 10px 25px rgba(0, 9, 75, 0.25);
+	border: 1.5px solid #00aaf8;
+	min-width: 170px;
+	z-index: 1000;
+	padding: 8px 0;
+}
+
+.rama-dropdown-item {
+	display: block;
+	padding: 8px 16px;
+	color: #00094b;
+	font-weight: 500;
+	text-decoration: none;
+	font-size: 14px;
+	transition: background-color 0.15s;
+}
+
+.rama-dropdown-item:hover {
+	background-color: rgba(0, 170, 248, 0.12);
+	color: #00094b;
+	text-decoration: none;
+}
+
+.rama-dropdown-item.text-danger {
+	color: #630900 !important;
+	font-weight: 600;
+}
+
+.rama-dropdown-divider {
+	height: 1px;
+	background-color: rgba(0, 170, 248, 0.2);
+	margin: 6px 0;
+}
+
+[data-theme="dark"] .rama-user-dropdown-menu {
+	background: #00094b;
+	border-color: #00aaf8;
+}
+[data-theme="dark"] .rama-dropdown-item {
+	color: #ffffff;
+}
+[data-theme="dark"] .rama-dropdown-item:hover {
+	background-color: rgba(0, 170, 248, 0.2);
+}
+
+/* ---------------------------------------------------------------------
+   Unified Sidebar Styling
+   --------------------------------------------------------------------- */
+body.rama-has-top-navbar {
+	padding-top: var(--rama-topbar-height) !important;
+}
+
+.rama-unified-section {
+	padding: 12px 10px;
+}
+
+.rama-sidebar-group-title {
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	color: #00094b;
+	padding: 8px 12px;
+	margin-top: 10px;
+}
+
+[data-theme="dark"] .rama-sidebar-group-title {
+	color: #00aaf8;
+}
+
+.rama-sidebar-link {
+	display: flex;
+	align-items: center;
+	padding: 8px 12px;
+	border-radius: 8px;
+	color: #1a202c;
+	text-decoration: none;
+	font-size: 14px;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	margin-bottom: 2px;
+}
+
+.rama-sidebar-link:hover {
+	background-color: rgba(0, 170, 248, 0.1);
+	color: #00094b;
+	text-decoration: none;
+}
+
+.rama-sidebar-link.rama-active {
+	background-color: #00094b !important;
+	color: #ffffff !important;
+	font-weight: 600;
+	border-left: 4px solid #00aaf8 !important;
+	box-shadow: 0 2px 6px rgba(0, 9, 75, 0.3);
+}
+
+.rama-sidebar-link-icon {
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 12px;
+	color: #00094b;
+}
+
+.rama-sidebar-link.rama-active .rama-sidebar-link-icon {
+	color: #00aaf8 !important;
+}
+
+[data-theme="dark"] .rama-sidebar-link {
+	color: #e2e8f0;
+}
+
+[data-theme="dark"] .rama-sidebar-link:hover {
+	background-color: rgba(0, 170, 248, 0.15);
+	color: #ffffff;
+}
+
+[data-theme="dark"] .rama-sidebar-link.rama-active {
+	background-color: rgba(0, 170, 248, 0.25) !important;
+	color: #ffffff !important;
+	border-left-color: #00aaf8 !important;
+}
+
+/* Hide Frappe Native Headers & Duplicates */
+.navbar {
+	display: none !important;
+}
+
+.body-sidebar > .standard-items-sections, 
+.body-sidebar-cards {
+	display: none !important;
+}
+
+/* Top Left Area & Hamburger Toggle Button */
+.rama-top-left-area {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.rama-sidebar-toggle-btn {
+	padding: 8px !important;
+	border: 1px solid rgba(0, 170, 248, 0.35) !important;
+	background: rgba(255, 255, 255, 0.08) !important;
+	color: #ffffff !important;
+	border-radius: 8px !important;
+	height: 40px !important;
+	width: 40px !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	cursor: pointer !important;
+	transition: all 0.2s ease !important;
+}
+
+.rama-sidebar-toggle-btn:hover {
+	background: rgba(0, 170, 248, 0.25) !important;
+	border-color: #00aaf8 !important;
+	box-shadow: 0 0 10px rgba(0, 170, 248, 0.4) !important;
+}
+
+/* Logo image styling (White Background, 3px padding, 4px border radius, 48px height) */
+.rama-logo-img {
+	height: 48px !important;
+	max-height: 52px !important;
+	width: auto !important;
+	object-fit: contain !important;
+	display: block !important;
+	background-color: #ffffff !important;
+	padding: 3px !important;
+	border-radius: 4px !important;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+
+/* Increased sidebar width and smooth collapse to 0px */
+.layout-side-section, 
+.body-sidebar, 
+.desk-sidebar {
+	width: var(--rama-sidebar-width, 250px) !important;
+	min-width: 0 !important;
+	transition: all 0.3s ease !important;
+}
+
+body.sidebar-closed .layout-side-section,
+body.sidebar-closed .body-sidebar,
+body.sidebar-closed .desk-sidebar,
+body.sidebar-closed .sidebar-items {
+	width: 0px !important;
+	min-width: 0px !important;
+	max-width: 0px !important;
+	overflow: hidden !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	opacity: 0 !important;
+	visibility: hidden !important;
+}
+
+body.sidebar-closed .layout-main-section,
+body.sidebar-closed .page-container {
+	margin-left: 0 !important;
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+/* Sidebar Text & Font Size & Ellipsis */
+.rama-sidebar-link {
+	display: flex !important;
+	align-items: center !important;
+	padding: 8px 10px !important;
+	border-radius: 6px !important;
+	color: #1a202c;
+	text-decoration: none;
+	font-size: 13px !important;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	margin-bottom: 2px;
+	white-space: nowrap !important;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+}
+
+.rama-sidebar-link span,
+.rama-sidebar-link a {
+	white-space: nowrap !important;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+}
+
+.rama-sidebar-group-title {
+	font-size: 11px !important;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	color: #00094b;
+	padding: 6px 10px !important;
+	margin-top: 8px;
+	white-space: nowrap !important;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+}
+
+/* Equal height for Hamburger and Logo */
+.rama-sidebar-toggle-btn {
+	padding: 0 !important;
+	border: 1px solid rgba(0, 170, 248, 0.4) !important;
+	background: rgba(255, 255, 255, 0.08) !important;
+	color: #ffffff !important;
+	border-radius: 6px !important;
+	height: 44px !important;
+	width: 44px !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	cursor: pointer !important;
+	transition: all 0.2s ease !important;
+	flex-shrink: 0 !important;
+}
+
+.rama-sidebar-toggle-btn svg {
+	width: 22px !important;
+	height: 22px !important;
+	stroke: #ffffff !important;
+}
+
+.rama-logo-img {
+	height: 44px !important;
+	max-height: 44px !important;
+	width: auto !important;
+	object-fit: contain !important;
+	display: block !important;
+	background-color: #ffffff !important;
+	padding: 3px !important;
+	border-radius: 4px !important;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+	flex-shrink: 0 !important;
+}
+
+/* Highest Z-Index for Notifications Dropdown */
+.rama-notif-wrapper .dropdown-notifications,
+.dropdown-notifications {
+	z-index: 999999 !important;
+}
+
+
+/* ========================================================
+   FINAL CHEVRON & FULL_WIDTH LAYOUT FIX
+   ======================================================= */
+
+/* 1. Force Chevrons to the right *however* they are nested */
+.desk-sidebar-item, .standard-sidebar-item, .item-anchor {
+    display: flex !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+}
+.sidebar-item-control {
+    margin-left: auto !important;
+}
+
+/* 2. Fix Full Width when Sidebar Closed */
+.layout-main-section-wrapper, .layout-main-section, .page-container {
+    margin-left: 0!important;
+    width: 100% !important;
+    flex-grow: 1 !important;
+}
+body.sidebar-closed .layout-main-section-wrapper,
+body.sidebar-closed .layout-main-section,
+body.sidebar-closed .page-container {
+    margin-left: 0!important;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-grow: 1 !important;
+}
