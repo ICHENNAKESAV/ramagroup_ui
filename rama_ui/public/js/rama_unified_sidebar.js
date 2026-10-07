@@ -102,18 +102,51 @@
 	}
 
 	function injectUnifiedSidebar() {
-		var container = document.querySelector(".sidebar-items") || document.querySelector(".desk-sidebar");
+		var activePageRaw = (typeof frappe !== 'undefined' && frappe.container && frappe.container.page) ? frappe.container.page : null;
+		var activePage = (activePageRaw && activePageRaw.jquery) ? activePageRaw[0] : activePageRaw;
+		if (!activePage) {
+			activePage = document.querySelector('.page-container:not([style*="display: none"])') || document.querySelector('.page-container') || document.body;
+		}
+		var container = activePage.querySelector(".sidebar-items") || activePage.querySelector(".desk-sidebar");
 		
 		if (!container) {
-			var sideSection = document.querySelector(".layout-side-section");
-			if (sideSection) {
-				var newSidebar = document.createElement("div");
-				newSidebar.className = "sidebar-items";
-				sideSection.appendChild(newSidebar);
-				container = newSidebar;
-			} else {
-				return;
+			var sideSection = activePage.querySelector(".layout-side-section") || activePage.querySelector(".body-sidebar");
+			if (!sideSection) {
+				var mainSection = activePage.querySelector(".layout-main-section") || activePage.querySelector(".page-content") || activePage.querySelector(".desktop-container");
+				var pageBody = activePage.querySelector(".page-body") || activePage.querySelector(".layout-main");
+				if (mainSection && mainSection.parentNode) {
+					sideSection = document.createElement("div");
+					sideSection.className = "layout-side-section hidden-xs hidden-sm";
+					mainSection.parentNode.insertBefore(sideSection, mainSection);
+					
+					if (mainSection.classList.contains('col-sm-12')) {
+						mainSection.classList.remove('col-sm-12');
+						mainSection.classList.add('col-sm-10');
+						sideSection.classList.add('col-sm-2');
+					}
+					
+					if ((mainSection.classList.contains('page-content') || mainSection.classList.contains('desktop-container')) && mainSection.parentNode.classList.contains('page-body')) {
+						mainSection.parentNode.style.display = 'flex';
+						sideSection.style.width = '250px';
+						sideSection.style.flexShrink = '0';
+						mainSection.style.flex = '1';
+					}
+				} else if (pageBody) {
+					sideSection = document.createElement("div");
+					sideSection.className = "layout-side-section hidden-xs hidden-sm";
+					pageBody.prepend(sideSection);
+					pageBody.style.display = 'flex';
+					sideSection.style.width = '250px';
+					sideSection.style.flexShrink = '0';
+				} else {
+					return;
+				}
 			}
+
+			var newSidebar = document.createElement("div");
+			newSidebar.className = "sidebar-items";
+			sideSection.appendChild(newSidebar);
+			container = newSidebar;
 		}
 
 		var existing = container.querySelector(".rama-unified-section");
@@ -537,6 +570,23 @@
 		var path = window.location.pathname.replace(/\/$/, "");
 		if (path === "/app" || path === "/desk") {
 			var defaultRoute = "/app/home";
+			
+			if (frappe && frappe.boot) {
+				if (frappe.boot.default_route) {
+					defaultRoute = frappe.boot.default_route.startsWith("/") ? frappe.boot.default_route : "/" + frappe.boot.default_route;
+				} else if (frappe.boot.workspace_sidebar_item) {
+					var keys = Object.keys(frappe.boot.workspace_sidebar_item);
+					if (keys.length > 0) {
+						var hasHome = keys.find(k => k.toLowerCase() === 'home');
+						if (hasHome) {
+							defaultRoute = "/app/home";
+						} else {
+							defaultRoute = "/app/" + keys[0].toLowerCase().replace(/ /g, '-');
+						}
+					}
+				}
+			}
+			
 			if (frappe && frappe.set_route) {
 				frappe.set_route(defaultRoute);
 			} else {
@@ -548,15 +598,23 @@
 	
 	function ramaFixSidebar() {
 		setTimeout(function() {
-			$('.workspace-switcher, .sidebar-header').hide();
+			$('.workspace-switcher, .sidebar-header, .desk-sidebar .standard-sidebar-section, .sidebar-items > .standard-sidebar-section, .desk-sidebar .sidebar-item-container').hide();
 			$('span:contains("Home")').closest(".sidebar-item-container").hide();
 			$('.sidebar-section-title, .standard-sidebar-label').hide();
-			$('.standard-sidebar-section.desk-sidebar-section div:contains("ERPNEXT")').hide();
 			$('.standard-sidebar-item').css('width', '100%');
 			$('.desk-sidebar-item, .standard-sidebar-item').css({"display": "flex", "justify-content": "space-between", "width": "100%"});
 			$('.item-anchor').css({"flex": "1", "width": "100%", "min-width": "0"});
-			$('.sidebar-item-control').css({"margin-left": "auto"});
-			$('.layout-main-section').css({"margin-left": "0px", "width": "auto"});
+			
+			// For classic desk/home route, Frappe sometimes injects extra native modules
+			var currentPath = window.location.pathname.replace(/\/$/, "");
+			if (currentPath.indexOf("/desk/home") !== -1 || document.querySelector('.icons-container')) {
+				$('.desk-sidebar > div:not(.rama-unified-section), .sidebar-items > div:not(.rama-unified-section)').hide();
+			}
+			
+			var unifiedSection = document.querySelector('.rama-unified-section');
+			if (unifiedSection) {
+				unifiedSection.style.display = 'block';
+			}
 		}, 100);
 	}
 
@@ -578,48 +636,167 @@
 		observer.observe(targetNode, { childList: true, subtree: true });
 	}
 
-	function init() {
-        console.log("RAMA UI ACTIVE");
-		if (isInitialized) return;
+	let isMutating = false;
+	const ensureRamaSidebar = () => {
+		if (isMutating) return;
+		if (!frappe || !frappe.boot || !frappe.boot.workspace_sidebar_item) return;
 
-		if (!frappe || !frappe.boot || !frappe.boot.workspace_sidebar_item) {
-			setTimeout(init, 300);
-			return;
+		// Inject robust CSS to handle visibility without fighting Vue's virtual DOM
+		if (!document.getElementById('rama-force-style')) {
+			var style = document.createElement('style');
+			style.id = 'rama-force-style';
+			style.innerHTML = `
+				.body-sidebar-container.hidden, .body-sidebar-container.hide, .body-sidebar-container[style*="display: none"] { display: block !important; }
+				.layout-side-section.hidden, .layout-side-section.hide, .layout-side-section[style*="display: none"] { display: block !important; }
+				.desk-sidebar .workspace-switcher, .desk-sidebar .sidebar-header, .desk-sidebar .sidebar-section-title, .desk-sidebar .standard-sidebar-label, .icons-container { display: none !important; }
+				.desk-sidebar-item, .standard-sidebar-item { display: flex !important; justify-content: space-between !important; width: 100% !important; }
+			`;
+			document.head.appendChild(style);
 		}
 
-		isInitialized = true;
+		// Safely find the exact active page container according to Frappe's router
+		var activePageRaw = (typeof frappe !== 'undefined' && frappe.container && frappe.container.page) ? frappe.container.page : null;
+		// Extract DOM element if it's a jQuery object
+		var activePage = (activePageRaw && activePageRaw.jquery) ? activePageRaw[0] : activePageRaw;
 		
-		setTimeout(function() {
+		if (!activePage) {
+			activePage = document.querySelector('.page-container:not([style*="display: none"])') || document.querySelector('.page-container') || document.body;
+		}
+
+		var sideSection = activePage.querySelector(".layout-side-section") || activePage.querySelector(".body-sidebar");
+		var sidebar = activePage.querySelector(".desk-sidebar") || activePage.querySelector(".sidebar-items");
+		var mainSection = activePage.querySelector(".layout-main-section") || activePage.querySelector(".page-content") || activePage.querySelector(".desktop-container");
+		var pageBody = activePage.querySelector(".page-body") || activePage.querySelector(".layout-main");
+
+		// Only modify DOM if something is actually missing or stuck hidden
+		var needsDomUpdate = (!sideSection && (mainSection || pageBody)) || (sidebar && !sidebar.querySelector(".rama-unified-section"));
+		if (!needsDomUpdate && mainSection) {
+			if (!mainSection.classList.contains('col-sm-10')) needsDomUpdate = true;
+			if (mainSection.style.display === 'none' || mainSection.classList.contains('hidden') || mainSection.classList.contains('hide')) needsDomUpdate = true;
+		}
+		if (activePage && activePage !== document.body) {
+			if (activePage.style.display === 'none' || activePage.classList.contains('hidden') || activePage.classList.contains('hide')) needsDomUpdate = true;
+		}
+		
+		if (!needsDomUpdate) return;
+
+		isMutating = true;
+		if (typeof ramaSidebarObserver !== 'undefined' && ramaSidebarObserver) {
+			ramaSidebarObserver.disconnect();
+		}
+		
+		// Rescue the active page container if it got stuck hidden during transition
+		if (activePage && activePage !== document.body) {
+			if (activePage.style.display === 'none' || activePage.style.display === '') {
+				activePage.style.setProperty('display', 'block', 'important');
+			}
+			activePage.classList.remove('hidden', 'hide');
+		}
+
+		// 1. Fix Layout side section if missing
+		if (!sideSection && (mainSection || pageBody)) {
+			sideSection = document.createElement("div");
+			sideSection.className = "layout-side-section hidden-xs hidden-sm";
+			
+			if (mainSection && mainSection.parentNode) {
+				mainSection.parentNode.insertBefore(sideSection, mainSection);
+			} else if (pageBody) {
+				pageBody.prepend(sideSection);
+			}
+			
+			if (pageBody) {
+				pageBody.style.display = 'flex';
+				sideSection.style.width = '250px';
+				sideSection.style.flexShrink = '0';
+				if (mainSection) {
+					mainSection.style.flex = '1';
+				}
+			}
+		}
+
+		// 2. Fix main section widths and visibility
+		if (mainSection && sideSection && !document.body.classList.contains('sidebar-closed')) {
+			if (mainSection.style.display === 'none') mainSection.style.display = 'block';
+			if (mainSection.classList.contains('col-sm-12')) {
+				mainSection.classList.remove('col-sm-12');
+				mainSection.classList.add('col-sm-10');
+			}
+			mainSection.style.width = 'auto';
+		}
+
+		// 3. Inject Unified Sidebar HTML if missing
+		if (!sidebar && sideSection) {
+			sidebar = document.createElement("div");
+			sidebar.className = "sidebar-items";
+			sideSection.appendChild(sidebar);
+		}
+
+		if (sidebar && !sidebar.querySelector(".rama-unified-section")) {
 			injectUnifiedSidebar();
 			injectTopNavbar();
-			ramaFixSidebar();
-			observeAndHideSidebarHeader();
-			checkDefaultRoute();
-		}, 300);
+			highlightActiveItem();
+		}
 
-		setTimeout(checkDefaultRoute, 1000);
-		setTimeout(checkDefaultRoute, 2500);
-
-		$(document).on("sidebar_setup", function () {
-			setTimeout(injectUnifiedSidebar, 100);
+		// Remove native Home and ERPNEXT icons
+		document.querySelectorAll('span, div').forEach(el => {
+			if (el.innerText === "Home") {
+				let container = el.closest(".sidebar-item-container");
+				if (container && container.style.display !== 'none') container.style.display = 'none';
+			}
+			if (el.innerText === "ERPNEXT" && el.closest('.standard-sidebar-section')) {
+				let container = el.closest('.standard-sidebar-section');
+				if (container && container.style.display !== 'none') container.style.display = 'none';
+			}
 		});
 
-		if (frappe.router) {
-			frappe.router.on("change", function () {
-				setTimeout(highlightActiveItem, 150);
-				setTimeout(injectUnifiedSidebar, 300);
-				setTimeout(injectTopNavbar, 300);
+		var unifiedSection = document.querySelector('.rama-unified-section');
+		if (unifiedSection && unifiedSection.style.display === 'none') {
+			unifiedSection.style.display = 'block';
+		}
+
+		if (typeof ramaSidebarObserver !== 'undefined' && ramaSidebarObserver && document.body) {
+			ramaSidebarObserver.observe(document.body, {
+				childList: true,
+				subtree: true,
+				attributes: true,
+				attributeFilter: ['class']
 			});
 		}
+		
+		setTimeout(() => { isMutating = false; }, 10);
+	};
+
+	document.addEventListener('DOMContentLoaded', ensureRamaSidebar);
+
+	const ramaSidebarObserver = new MutationObserver(ensureRamaSidebar);
+	if (typeof document !== 'undefined' && document.body) {
+		ramaSidebarObserver.observe(document.body, {
+			childList: true,
+			subtree: true,
+			attributes: true,
+			attributeFilter: ['class']
+		});
 	}
 
-	$(document).on("startup", function () {
-		init();
+	$(document).on("page-change", function() {
+		setTimeout(ensureRamaSidebar, 50);
+		setTimeout(ensureRamaSidebar, 200);
+		setTimeout(highlightActiveItem, 300);
 	});
 
-	if (frappe && frappe.boot && frappe.boot.workspace_sidebar_item) {
-		init();
-	}
+	// Default Route Check
+	$(document).on("startup", function() {
+		var path = window.location.pathname.replace(/\/$/, "");
+		if (path === "/app" || path === "/desk") {
+			var defaultRoute = "/app/home";
+			if (frappe && frappe.boot && frappe.boot.default_route) {
+				defaultRoute = frappe.boot.default_route.startsWith("/") ? frappe.boot.default_route : "/" + frappe.boot.default_route;
+			}
+			if (frappe && frappe.set_route) frappe.set_route(defaultRoute);
+			else window.location.replace(defaultRoute);
+		}
+	});
+
 })();
 setInterval(function(){ var el = document.querySelector('.navbar-breadcrumbs a[href="/desk"]'); if(el) el.setAttribute('href', '/app'); }, 500);
 
@@ -663,6 +840,57 @@ const replacePageIcons = () => {
 document.addEventListener("DOMContentLoaded", replacePageIcons);
 const iconObserver = new MutationObserver(replacePageIcons);
 iconObserver.observe(document.body, { childList: true, subtree: true });
+
+// Bulletproof fallback to ensure active page never gets stuck hidden
+setInterval(function() {
+    if (typeof frappe === 'undefined') return;
+    
+    var expectedPages = [];
+    
+    // Attempt 1: Using Frappe's container.page
+    if (frappe.container && frappe.container.page) {
+        var activePageRaw = frappe.container.page;
+        var activePage = (activePageRaw && activePageRaw.jquery) ? activePageRaw[0] : activePageRaw;
+        if (activePage && activePage !== document.body) {
+            expectedPages.push(activePage);
+            if (activePage.style.display === 'none') {
+                activePage.style.setProperty('display', 'block', 'important');
+            }
+            if (activePage.classList.contains('hidden')) activePage.classList.remove('hidden');
+            if (activePage.classList.contains('hide')) activePage.classList.remove('hide');
+        }
+    }
+    
+    // Attempt 2: Using the current route to enforce visibility of the route's container
+    var route = frappe.get_route ? frappe.get_route() : null;
+    if (route && route[0]) {
+        var routePage = document.getElementById('page-' + route[0]);
+        if (routePage) {
+            expectedPages.push(routePage);
+            if (routePage.style.display === 'none') {
+                routePage.style.setProperty('display', 'block', 'important');
+            }
+            if (routePage.classList.contains('hidden')) routePage.classList.remove('hidden');
+            if (routePage.classList.contains('hide')) routePage.classList.remove('hide');
+            
+            // Also ensure the page-head is visible
+            var pageHead = routePage.querySelector('.page-head.flex');
+            if (pageHead && pageHead.style.display === 'none') {
+                pageHead.style.setProperty('display', 'flex', 'important');
+            }
+        }
+    }
+
+    // Cleanup: Hide any page-containers that are NOT the expected active pages
+    // This fixes the issue where old pages stay visible due to !important
+    document.querySelectorAll('.page-container').forEach(function(p) {
+        if (!expectedPages.includes(p)) {
+            if (p.style.display !== 'none') {
+                p.style.setProperty('display', 'none', 'important');
+            }
+        }
+    });
+}, 500);
 
 
 // Dropdown List Stats & Group-by Lists Styles
@@ -725,10 +953,17 @@ const replaceFormIcons = () => {
         const svg = btn.querySelector('svg');
         if (!svg) return;
 
-        if (lowerTitle.includes('reload') || lowerTitle.includes('refresh')) {
+        if (lowerTitle === 'form') {
+            svg.outerHTML = '<img src="/assets/rama_ui/images/form.svg" style="width:14px; margin-right:4px;" alt="Form"/>';
+        }
+        else if (lowerTitle.includes('reload') || lowerTitle.includes('refresh')) {
             svg.outerHTML = '<img src="/assets/rama_ui/images/reload.png" style="width:14px; margin-right:4px; filter: brightness(0) invert(1);" alt="Reload"/>';
         }
         else if (lowerTitle.includes('print')) {
+            if (btn.closest('.form-sidebar')) {
+                // Keep the existing Frappe SVG icon for the form sidebar
+                return;
+            }
             svg.outerHTML = '<img src="/assets/rama_ui/images/printer.png" style="width:14px; margin-right:4px; filter: brightness(0) invert(1);" alt="Print"/>';
         }
         else if (lowerTitle.includes('full page')) {

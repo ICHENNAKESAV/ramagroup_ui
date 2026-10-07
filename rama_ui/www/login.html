@@ -146,6 +146,26 @@
 
         // Handle initial hash routing
         window.addEventListener('DOMContentLoaded', () => {
+            // Redirect logged-in users to /app
+            const getCookie = (name) => {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return unescape(parts.pop().split(';').shift());
+                return null;
+            };
+            const userId = getCookie('user_id');
+            if (userId && userId !== 'Guest' && window.location.pathname === '/') {
+                let route = '/app';
+                if (window.location.search) {
+                    let urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.get("redirect-to")) {
+                        route = unescape(urlParams.get("redirect-to"));
+                    }
+                }
+                window.location.href = route;
+                return;
+            }
+            
             if(window.location.hash === '#forgot') {
                 showSection('forgot-section');
             }
@@ -198,7 +218,19 @@
                     const data = await response.json();
 
                     if (response.ok && data.message === 'Logged In') {
-                        window.location.href = data.home_page || '/app';
+                        let route = data.default_route || data.home_page || '/app';
+                        if (route === '/') {
+                            route = '/app';
+                        }
+                        
+                        if (window.location.search) {
+                            let urlParams = new URLSearchParams(window.location.search);
+                            if (urlParams.get("redirect-to")) {
+                                route = unescape(urlParams.get("redirect-to"));
+                            }
+                        }
+                        
+                        window.location.href = route;
                     } else {
                         let errorMessage = 'Invalid credentials, try again.';
                         if (data._server_messages) {
