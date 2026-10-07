@@ -1096,3 +1096,17 @@ body.sidebar-closed .page-container {
     stroke: #fff !important;
     fill: none !important;
 }
+
+/* =====================================================================
+   LIST VIEW HEADERS
+   ===================================================================== */
+.list-row-container .list-row-head {
+    background-color: var(--rama-topbar-bg, #00094b) !important;
+    color: #ffffff !important;
+    border-radius: 6px 6px 0 0;
+}
+.list-row-container .list-row-head .text-muted,
+.list-row-container .list-row-head span,
+.list-row-container .list-row-head .list-subject {
+    color: #ffffff !important;
+}
