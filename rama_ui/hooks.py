@@ -22,6 +22,4 @@ web_include_css = [
 	"/assets/rama_ui/css/rama_login.css"
 ]
 
-web_include_js = [
-	"/assets/rama_ui/js/rama_login.js"
-]
+

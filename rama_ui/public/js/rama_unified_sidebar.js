@@ -499,6 +499,19 @@
 					dropdownMenu.style.display = "none";
 				}
 			});
+
+			var logoutBtn = dropdownMenu.querySelector('#rama-btn-logout');
+			if (logoutBtn) {
+				logoutBtn.onclick = function(e) {
+					e.preventDefault();
+					if (window.frappe && window.frappe.app && window.frappe.app.logout) {
+						window.frappe.app.logout();
+					} else {
+						window.location.href = '/?cmd=web_logout';
+					}
+				};
+			}
+
 		}
 	}
 
