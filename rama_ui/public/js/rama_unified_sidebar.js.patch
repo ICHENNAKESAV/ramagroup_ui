@@ -1,0 +1,4 @@
+--- /home/saikumar/v16-bench/apps/rama_ui/rama_ui/public/js/rama_unified_sidebar.js
++++ /home/saikumar/v16-bench/apps/rama_ui/rama_ui/public/js/rama_unified_sidebar.js
+@@ -559,6 +559,57 @@
+ 			.layout-main-section.css({" margin-left\:
