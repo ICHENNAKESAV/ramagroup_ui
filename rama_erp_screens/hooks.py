@@ -20,6 +20,17 @@ app_license = "mit"
 # 		"has_permission": "rama_erp_screens.api.permission.has_app_permission"
 # 	}
 # ]
+# include js, css files in header of desk.html  
+app_include_css = "/assets/rama_erp_screens/css/custom_css.css"
+# app_include_js = "/assets/rama_erp_screens/js/rama_erp_screens.js"
+
+# include js, css files in header of web template
+# web_include_css = "/assets/rama_erp_screens/css/rama_erp_screens.css"
+web_include_js = ["/assets/rama_erp_screens/js/login.js","/assets/rama_erp_screens/js/sidebar.js","/assets/rama_erp_screens/js/navbar.js","/assets/rama_erp_screens/js/mobile.js","/assets/rama_erp_screens/js/list.js","/assets/rama_erp_screens/js/form.js","/assets/rama_erp_screens/js/icons.js","/assets/rama_erp_screens/js/form.js","/assets/rama_erp_screens/js/dialog.js"]
+
+
+app_include_js = ["/assets/rama_erp_screens/js/login.js","/assets/rama_erp_screens/js/sidebar.js","/assets/rama_erp_screens/js/navbar.js","/assets/rama_erp_screens/js/mobile.js","/assets/rama_erp_screens/js/list.js","/assets/rama_erp_screens/js/form.js","/assets/rama_erp_screens/js/icons.js","/assets/rama_erp_screens/js/form.js","/assets/rama_erp_screens/js/dialog.js"]
+
 
 # Includes in <head>
 # ------------------
